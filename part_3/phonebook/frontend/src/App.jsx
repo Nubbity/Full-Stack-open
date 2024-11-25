@@ -107,13 +107,14 @@ const App = () => {
             setPersons(persons.map(person => 
               person.id === existingPerson.id ? personObject : person
             ));
-          }).catch(error => {
-            setErrorMessage(`${personObject.name}'s information has already removed.`)
+          })
+          .catch(error => {
+            console.log(error.response.data.error)
+            setErrorMessage(error.response.data.error)
             setTimeout(() => {
               setErrorMessage(null)
-            }, 5000)}
-
-          )  
+            }, 5000)
+          })
 
       }
       setErrorMessage(`${personObject.name}'s number was changed to: ${personObject.number}`)
@@ -129,13 +130,18 @@ const App = () => {
       .create(personObject)
       .then(personObject => {
         setPersons(persons.concat(personObject))
-
+        setErrorMessage(`${personObject.name} added with phonenumber: ${personObject.number}`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
-
-      setErrorMessage(`${personObject.name} added with phonenumber: ${personObject.number}`)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      .catch(error => {
+        console.log(error.response.data.error)
+        setErrorMessage(error.response.data.error)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
     }
     setNewName('')
     setNewNumber('')
