@@ -19,7 +19,7 @@ const Blog = ({ blog, setBlogs, blogs, loggedInUser, addLike }) => {
     else {
       const updatedBlog = { ...blog, likes: blog.likes + 1, user: blog.user._id }
       try {
-        const response = await blogService.addLike(blog.id, updatedBlog)
+        const response = await blogService.update(blog.id, updatedBlog)
         setBlogs(blogs.map(b => (b.id !== blog.id ? b : response)))
       } catch (exception) {
         console.error('Error updating blog:', exception.response?.data || exception.message)

@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import Blog from './Blog'
+import AddBlogForm from './AddBlogForm'
 import userEvent from '@testing-library/user-event'
 
 test('renders content', () => {
@@ -73,26 +74,29 @@ test('Multiple like clicks', async() => {
 })
 
 test('New blog form', async() => {
-    const blog = {
-        title: 'Test Title',
-        author: 'Test Author',
-        url: 'http://testurl.com',
-        likes: 69,
-        user: { username: 'testuser' },
-      }
     const mockHandler = vi.fn()
-    const loggedInUser = { username: 'testuser' }
-    const { container } = render(
-      <Blog blog={blog} setBlogs={() => {}} blogs={[]} loggedInUser={loggedInUser} addLike={mockHandler} />
+    render(
+     <AddBlogForm addBlog={mockHandler} setShowAddBlog={() => {}}></AddBlogForm>
     )
-
+    screen.debug()
 
     const user = userEvent.setup()
-    const viewButton = screen.getByText('View')
-    await user.click(viewButton)
 
-    const likeButton = screen.getByText('like')
-    await user.click(likeButton)
-    await user.click(likeButton)
-    expect(mockHandler).toHaveBeenCalledTimes(2)
+
+    const titleInput = screen.getByPlaceholderText('title')
+    const authorInput = screen.getByPlaceholderText('author')
+    const urlInput = screen.getByPlaceholderText('url')
+    const createButton = screen.getByText('create')
+
+    await user.type(titleInput, 'Test Blog Title')
+    await user.type(authorInput, 'Test Blog Author')
+    await user.type(urlInput, 'http://testblogurl.com')
+
+    await user.click(createButton)
+    expect(mockHandler).toHaveBeenCalledTimes(1)
+    expect(mockHandler).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'Test Blog Title',
+        author: 'Test Blog Author',
+        url: 'http://testblogurl.com',
+      }))
 })

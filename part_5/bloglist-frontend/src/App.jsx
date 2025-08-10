@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import addBlogForm from './components/AddBlogForm'
 import './App.css'
 
 
@@ -108,35 +109,10 @@ const App = () => {
         <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} loggedInUser={user} />
       )}
       {!showAddBlog && (<button onClick={() => setShowAddBlog(!showAddBlog)}>New Blog</button>)}
-      {showAddBlog && addBlogView()}
+      {showAddBlog && addBlogForm(newBlog, setShowAddBlog)}
     </div>
   )
-  const addBlogView = () => (
-    <div>
-      <h2>Add a new blog</h2>
-      <form onSubmit={newBlog}>
-        <div>
-          title
-          <input type="text" name="title" />
-        </div>
-        <div>
-          author
-          <input type="text" name="author" />
-        </div>
-        <div>
-          url
-          <input type="text" name="url" />
-        </div>
-        <button type="submit">create</button>
-      </form>
-      <button onClick={() => setShowAddBlog(false)}>Cancel</button>
-    </div>
-  )
-  const errorView = () => (
-    <div className="error">
-      {errorMessage}
-    </div>
-  )
+
   useEffect(() => {
     blogService.getAll().then(blogs => {
       const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
