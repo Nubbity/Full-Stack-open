@@ -2,7 +2,7 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, setBlogs, blogs, loggedInUser, addLike }) => {
+const Blog = ({ blog, setBlogs, blogs, loggedInUser,setStatusMessage, addLike }) => {
   const [showBlog, setShowBlog] = useState(false)
 
   const blogStyle = {
@@ -32,6 +32,8 @@ const Blog = ({ blog, setBlogs, blogs, loggedInUser, addLike }) => {
       try {
         await blogService.remove(blog.id)
         setBlogs(blogs.filter(b => b.id !== blog.id))
+        setStatusMessage(`Blog ${blog.title} removed successfully`)
+        setTimeout(() => { setStatusMessage(null) }, 5000)
       } catch (error) {
         console.error('Error removing blog:', error)
       }

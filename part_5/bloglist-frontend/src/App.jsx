@@ -2,11 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import addBlogForm from './components/AddBlogForm'
 import './App.css'
-
-
-
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -19,63 +15,39 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    console.log('Logging in with', username, password)
-
     try {
-      const user = await loginService.login({
-        username, password,
-      })
-      console.log('Login successful:', user)
-      window.localStorage.setItem(
-        'loggedNoteappUser', JSON.stringify(user)
-      )
+      const user = await loginService.login({ username, password })
+      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
       setStatusMessage(`Welcome ${user.name}`)
-      setTimeout(() => {
-        setStatusMessage(null)
-      }, 3000)
+      setTimeout(() => setStatusMessage(null), 3000)
     } catch (exception) {
-      console.error('Login failed:', exception.response?.data || exception.message)
       setErrorMessage('Wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 3000)
+      setTimeout(() => setErrorMessage(null), 3000)
     }
   }
-  const newBlog = async (event) => {
-    event.preventDefault()
-    const form = event.target
-    const title = form.title.value
-    const author = form.author.value
-    const url = form.url.value
 
+  const newBlog = async ({ title, author, url }) => {
     try {
-      const newBlog = await blogService.create({
-        title, author, url,
-      })
+      const newBlog = await blogService.create({ title, author, url })
       setBlogs(blogs.concat(newBlog))
-      form.reset()
       setStatusMessage(`A new blog ${newBlog.title} by ${newBlog.author} added`)
-      setTimeout(() => {
-        setStatusMessage(null)
-      }, 3000)
+      setTimeout(() => setStatusMessage(null), 3000)
     } catch (exception) {
-      console.error('Error creating blog:', exception.response?.data || exception.message)
       setErrorMessage('Failed to create blog')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 3000)
+      setTimeout(() => setErrorMessage(null), 3000)
     }
   }
+
   const loginForm = () => (
     <div>
       <h2>Log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
-        username
+          username
           <input
             type="text"
             value={username}
@@ -84,7 +56,7 @@ const App = () => {
           />
         </div>
         <div>
-        password
+          password
           <input
             type="password"
             value={password}
@@ -97,6 +69,40 @@ const App = () => {
     </div>
   )
 
+  const AddBlogForm = ({ newBlog, setShowAddBlog }) => {
+    const handleSubmit = (event) => {
+      event.preventDefault()
+      const title = event.target.elements.title.value
+      const author = event.target.elements.author.value
+      const url = event.target.elements.url.value
+
+      newBlog({ title, author, url })
+      setShowAddBlog(false)
+    }
+
+    return (
+      <div>
+        <h2>Add a new blog</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            title
+            <input type="text" name="title" placeholder="title" />
+          </div>
+          <div>
+            author
+            <input type="text" name="author" placeholder="author" />
+          </div>
+          <div>
+            url
+            <input type="text" name="url" placeholder="url" />
+          </div>
+          <button type="submit">create</button>
+        </form>
+        <button onClick={() => setShowAddBlog(false)}>Cancel</button>
+      </div>
+    )
+  }
+
   const blogView = () => (
     <div>
       <h2>blogs</h2>
@@ -106,10 +112,10 @@ const App = () => {
         setUser(null)
       }}>logout</button>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} loggedInUser={user} />
+        <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} setStatusMessage={setStatusMessage} loggedInUser={user} />
       )}
       {!showAddBlog && (<button onClick={() => setShowAddBlog(!showAddBlog)}>New Blog</button>)}
-      {showAddBlog && addBlogForm(newBlog, setShowAddBlog)}
+      {showAddBlog && <AddBlogForm newBlog={newBlog} setShowAddBlog={setShowAddBlog} />}
     </div>
   )
 
@@ -122,7 +128,6 @@ const App = () => {
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
-    console.log('Logged user from localStorage:', loggedUserJSON)
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -138,7 +143,6 @@ const App = () => {
       {user === null ? loginForm() : blogView()}
     </div>
   )
-
 }
 
 export default App
