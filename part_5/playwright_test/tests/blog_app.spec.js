@@ -79,14 +79,25 @@ describe('When logged in', () => {
   })
 
   test('Blog can be liked', async ({ page }) => {
-    await page.getByRole('button', { name: 'View' }).last().click()
+    const timestamp = Date.now()
+    const blogTitle = `Test Blog ${timestamp}`
+    
+    await page.getByRole('button', { name: 'New blog' }).click()
+    await page.getByRole('textbox', { name: 'title' }).fill(blogTitle)
+    await page.getByRole('textbox', { name: 'author' }).fill('Test Author')
+    await page.getByRole('textbox', { name: 'url' }).fill('http://testblog.com')
+    await page.getByRole('button', { name: 'Create' }).click()
+
+    
+    await page.locator('.blog-summary').filter({ hasText: blogTitle }).locator('button', { hasText: 'View' }).click()
     const likesText = await page.getByText('Likes').textContent()
+    console.log('Current likes text:', likesText)
     const initialLikes = parseInt(likesText.split(':')[1].trim(), 10)
     await page.getByRole('button', { name: 'Like' }).click()
-    await page.waitForTimeout(100)
+    await page.waitForTimeout(300)
     const updatedLikesText = await page.getByText('Likes').textContent()
     const newLikes = parseInt(updatedLikesText.split(':')[1].trim(), 10)
-
+    console.log('Updated likes text:', updatedLikesText)
     expect(newLikes).toBe(initialLikes + 1)
   })
 
@@ -135,18 +146,20 @@ describe('When logged in', () => {
   })
 
   test('Blogs are ordered by likes', async ({ page, request }) => {
-      const viewButtons = await page.getByRole('button', { name: 'View' }).all();
-      for (const button of viewButtons) {
-        await button.click();
-      }
-      const likeButtonLocator = await page.getByRole('button', { name: 'Like' }).all();
-      const allLikes = [];
-      for (let i = 0; i < likeButtonLocator.length; i++) {
-        const likesText = await page.getByText('Likes').nth(i).textContent();
-        const initialLikes = parseInt(likesText.split(':')[1].trim(), 10);
-        allLikes.push(initialLikes);
-      }
-      const sortedLikes = [...allLikes].sort((a, b) => b - a);
-      expect(allLikes).toEqual(sortedLikes);
+    const likes = []
+    const blogContainers = await page.locator('.blog-summary').all()
+    
+    for (const container of blogContainers) {
+      await container.locator('button', { hasText: 'View' }).click()
+      const likesText = await container.getByText('Likes').textContent()
+      const likeCount = parseInt(likesText.split(':')[1].trim(), 10)
+      likes.push(likeCount)
+      console.log(`Blog likes: ${likeCount}`)
+    }
+    
+    const sortedLikes = [...likes].sort((a, b) => b - a) 
+    console.log('Original order:', likes)
+    console.log('Sorted order:', sortedLikes)
+    expect(likes).toEqual(sortedLikes)
   })
 })
