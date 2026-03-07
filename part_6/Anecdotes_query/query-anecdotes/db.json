@@ -1,0 +1,67 @@
+{
+  "anecdotes": [
+    {
+      "content": "If it hurts, do it more often",
+      "id": "47145",
+      "votes": 17
+    },
+    {
+      "content": "Adding manpower to a late software project makes it later!",
+      "id": "21149",
+      "votes": 18
+    },
+    {
+      "content": "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
+      "id": "69581",
+      "votes": 3
+    },
+    {
+      "content": "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+      "id": "36975",
+      "votes": 7
+    },
+    {
+      "content": "Premature optimization is the root of all evil.",
+      "id": "25170",
+      "votes": 4
+    },
+    {
+      "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
+      "id": "98312",
+      "votes": 1
+    },
+    {
+      "content": "Kaisalassa",
+      "vote": 0,
+      "id": "KpKB_3i",
+      "votes": 7
+    },
+    {
+      "content": "Miks mulla ei oo votei",
+      "vote": 0,
+      "id": "cuaT0k1",
+      "votes": 2
+    },
+    {
+      "content": "kissa",
+      "vote": 0,
+      "id": "Lgi_ALt",
+      "votes": 3
+    },
+    {
+      "content": "mä oon jepa",
+      "votes": 1,
+      "id": "WxHuW98"
+    },
+    {
+      "content": "kissa",
+      "votes": 0,
+      "id": "XbCr-8J"
+    },
+    {
+      "content": "Kaila",
+      "votes": 0,
+      "id": "i4rOYYJ"
+    }
+  ]
+}
